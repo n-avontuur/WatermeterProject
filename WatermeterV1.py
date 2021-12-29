@@ -58,8 +58,8 @@ def Interrupt(channel):
     req1 = urllib2.Request(url1)
     response1 = urllib2.urlopen(req1)
     #Voor debug => print voorbeeld van de JSON aanroep en/of de counter
-    print "JSON call = "+ str(url1)
-    print "Watermeter Counter = " + str(Counter)
+    print "JSON call =" + str(url1)
+    print "Watermeter Counter =" + str(Counter)
 
     #Interrupt-Event toevoegen, sensor geeft een 0 en en bij detectie een 1
 #Bij detectie een 1 daarom check stijgende interrupt.
