@@ -1,15 +1,21 @@
 #!/usr/bin/python
+from typing import Literal
+#GPIO library
 import RPi.GPIO as GPIO
 import time
 import os
 
+#Openhab library
+from openhab import OpenHAB
 
 global Counter
 Counter = 0
+DigitalPin = 40
 
-DigitalPin = 1
-#Openhab URL
-OpenhabUrl = "http://192.168.0.227:8080"
+#Setting up Openhab connection
+OpenhabUrl = "http://192.168.0.228:8080/rest"
+openhab = OpenHAB(OpenhabUrl) 
+items = openhab.fetch_all_items()
 
 #Open meterstand.txt file en lees meterstand
 #Als meterstand.txt niet aanwezig is maakt script bestand aan en vult de meterstand
@@ -31,11 +37,14 @@ def CallExistingTextFile():
 
 def ReadTextFile():
     f = open(fn, "w")
-    f.write( 'meterstand = ' + repr(Counter))
+    f.write('meterstand = ' + repr(Counter))
     f.close()
 
 def Interrupt(channel):
-    print('Callback function called!')
+    
+    Liters = openhab.get_item('WatermeterM3')
+    M3 = openhab.get_item('WatermeterL')
+
     print('Callback function called!')
     time.sleep(0.05)         # need to filter out the false positive of some power fluctuation
     if GPIO.input(40) == 0:
@@ -47,6 +56,11 @@ def Interrupt(channel):
     f.close()
     #Schrijf meterstand naar bestand
     ReadTextFile()
+    # voor debug => print waarde van watermeter
+    print ("Watermeter Counter =" + str(Counter))
+    Liters.command(Counter)
+    M3Counter = Counter/1000
+    M3.command(M3Counter)
 
 
 #main script that will run
@@ -62,5 +76,5 @@ try:
     while True:
       time.sleep(0.2)        
 except KeyboardInterrupt:
-  GPIO.cleanup()
-  print "\nBye"
+    GPIO.cleanup()
+    print ("\nBye")
