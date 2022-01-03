@@ -40,8 +40,7 @@ def ReadTextFile():
     f.write('meterstand = ' + repr(Counter))
     f.close()
 
-def Interrupt(channel):
-    
+def Interrupt(channel):  
     Liters = openhab.get_item('WatermeterM3')
     M3 = openhab.get_item('WatermeterL')
 
